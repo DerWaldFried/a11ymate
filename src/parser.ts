@@ -1,59 +1,56 @@
-import { Parser } from "htmlparser2";
 import * as vscode from "vscode";
 import { HtmlNode } from "./html-types";
 
-export function parseHtml(html: string): HtmlNode[] {
-  const roots: HtmlNode[] = [];
-  const stack: HtmlNode[] = [];
+export async function parseHtml(html: string): Promise<HtmlNode[]> {
+  const parse5 = await import("parse5");
 
-  const parser = new Parser(
-    {
-      onopentag(name, attributes) {
-        const start = parser.startIndex;
-        const end = parser.endIndex;
+  const document = parse5.parseFragment(html, {
+    sourceCodeLocationInfo: true
+  });
 
-        const node: HtmlNode = {
-          tagName: name,
-          attributes: Object.entries(attributes).map(([k, v]) => ({
-            name: k,
-            value: v ?? ""
-          })),
-          children: [],
-          range: new vscode.Range(
-            positionFromIndex(html, start),
-            positionFromIndex(html, end + 1)
-          )
-        };
+  const nodes: HtmlNode[] = [];
 
-        if (stack.length === 0) roots.push(node);
-        else stack[stack.length - 1].children!.push(node);
+  function walk(node: any) {
+    if (node.tagName && node.sourceCodeLocation) {
+      const loc = node.sourceCodeLocation;
 
-        stack.push(node);
-      },
+      if (!loc.startTag) return;
 
-      onclosetag() {
-        stack.pop();
+      // WICHTIG: Nur den Start-Tag markieren, nicht das ganze Element
+      const start = loc.startTag.startOffset;
+      const end = loc.startTag.endOffset;
+
+      const htmlNode: HtmlNode = {
+        tagName: node.tagName,
+        attributes: node.attrs?.map((a: any) => ({
+          name: a.name,
+          value: a.value
+        })) || [],
+        children: [],
+        range: new vscode.Range(
+          positionFromIndex(html, start),
+          positionFromIndex(html, end)
+        )
+      };
+
+      nodes.push(htmlNode);
+    }
+
+    if (node.childNodes) {
+      for (const child of node.childNodes) {
+        walk(child);
       }
-    },
-    { decodeEntities: true }
-  );
-
-  parser.write(html);
-  parser.end();
-
-  return roots;
-}
-
-function positionFromIndex(text: string, index: number): vscode.Position {
-  let line = 0;
-  let lastBreak = 0;
-
-  for (let i = 0; i < index; i++) {
-    if (text.charCodeAt(i) === 10) { // \n
-      line++;
-      lastBreak = i + 1;
     }
   }
 
-  return new vscode.Position(line, index - lastBreak);
+  walk(document);
+
+  return nodes;
+}
+
+function positionFromIndex(text: string, index: number): vscode.Position {
+  const lines = text.slice(0, index).split("\n");
+  const line = lines.length - 1;
+  const character = lines[lines.length - 1].length;
+  return new vscode.Position(line, character);
 }

@@ -7,7 +7,9 @@ export const imgAltRule: A11yRule = {
   id: "img-alt",
 
   check(node: HtmlNode, context: RuleContext) {
-    if (node.tagName !== "img") return;
+    if (node.tagName !== "img") {
+      return;
+    }
 
     const lang = getLanguage();
     const messages = lang.imgAlt;
@@ -15,11 +17,11 @@ export const imgAltRule: A11yRule = {
     const hasAlt = node.attributes?.some(attr => attr.name === "alt");
 
     if (!hasAlt) {
-      context.report({
+        context.report({
         message: messages.title,
         description: messages.description,
-        range: new vscode.Range(0, 0, 0, 0) // Platzhalter
-      });
+        range: node.range
+        });
     }
   }
 };

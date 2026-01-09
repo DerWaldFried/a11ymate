@@ -1,13 +1,13 @@
-// src/html-types.ts
+import * as vscode from "vscode";
 
 export interface HtmlAttribute {
   name: string;
-  value?: string;
+  value: string;
 }
 
 export interface HtmlNode {
   tagName: string;
   attributes: HtmlAttribute[];
-  children?: HtmlNode[];
-  range: any; // später ersetzen wir das durch vscode.Range
+  children: HtmlNode[];
+  range: vscode.Range;
 }

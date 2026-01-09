@@ -9,7 +9,11 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:html",
+    "onLanguage:php",
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
@@ -46,6 +50,7 @@
     "typescript-eslint": "^8.48.1"
   },
   "dependencies": {
-    "htmlparser2": "^10.0.0"
+    "htmlparser2": "^10.0.0",
+    "parse5": "^8.0.0"
   }
 }
