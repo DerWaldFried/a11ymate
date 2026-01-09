@@ -1,6 +1,7 @@
-out
-dist
-node_modules
+node_modules/
+out/
+dist/
 .vscode-test/
 *.vsix
-LICENSE
+.DS_Store
+package-lock.json

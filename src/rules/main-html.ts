@@ -54,7 +54,8 @@ export const mainTagRule: A11yRule = {
         context.report({
           message: lang.mainTag.tooMany.title,
           description: lang.mainTag.tooMany.description,
-          range: node.range
+          range: node.range,
+          relatedNode: node
         });
       }
     }
