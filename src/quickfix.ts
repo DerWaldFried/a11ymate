@@ -61,7 +61,7 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
    * Fügt einen Quick Fix hinzu, um den Inhalt in ein <main>-Tag einzuwickeln.
    */
   private addMainFix(document: vscode.TextDocument, lang: any, actions: vscode.CodeAction[]) {
-    const fix = new vscode.CodeAction("In <main> einwickeln", vscode.CodeActionKind.QuickFix);
+    const fix = new vscode.CodeAction(lang.mainTag.missing.action, vscode.CodeActionKind.QuickFix);
     fix.edit = new vscode.WorkspaceEdit();
     
     const firstLine = document.lineAt(0);

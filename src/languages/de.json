@@ -7,7 +7,8 @@
   "mainTag": {
     "missing": {
       "title": "⚠️ A11y: <main>-Tag fehlt",
-      "description": "Ein <main>-Tag ist wichtig für die Barrierefreiheit, um den Hauptinhalt der Seite zu kennzeichnen."
+      "description": "Ein <main>-Tag ist wichtig für die Barrierefreiheit, um den Hauptinhalt der Seite zu kennzeichnen.",
+      "action": "In <main> einwickeln um den Hauptinhalt zu markieren."
     },
     "tooMany": {
       "title": "⚠️ A11y: Zu viele <main>-Tags",

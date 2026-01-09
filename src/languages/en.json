@@ -7,7 +7,8 @@
   "mainTag": {
     "missing": {
       "title": "⚠️ A11y: Missing <main> tag",
-      "description": "A <main> tag is important for accessibility to identify the main content of the page."
+      "description": "A <main> tag is important for accessibility to identify the main content of the page.",
+      "action": "Use <main> to mark the main content of the page."
     },
     "tooMany": {
       "title": "⚠️ A11y: Too many <main> tags",
