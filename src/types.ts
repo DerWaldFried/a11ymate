@@ -13,6 +13,7 @@ export interface RuleContext {
     message: string;
     description: string;
     range: any;
+    relatedNode?: HtmlNode;
   }) => void;
 }
 

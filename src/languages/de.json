@@ -13,5 +13,15 @@
       "title": "⚠️ A11y: Zu viele <main>-Tags",
       "description": "Es darf nur ein sichtbarer <main>-Tag pro Seite existieren, um Screenreader nicht zu verwirren."
     }
+  },
+  "headingOrder": {
+    "multipleH1": {
+      "title": "⚠️ A11y: Zu viele <h1>-Tags",
+      "description": "Es sollte nur eine <h1>-Überschrift pro Seite geben, die den Hauptinhalt beschreibt."
+    },
+    "skippedLevel": {
+      "title": "⚠️ A11y: Überschriftenebene übersprungen",
+      "description": "Die Hierarchie ist inkonsistent (z.B. <h1> auf <h3>). Überschriften sollten nicht nur für Styling genutzt werden."
+    }
   }
 }

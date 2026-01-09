@@ -52,6 +52,16 @@ export class A11yCodeLensProvider implements vscode.CodeLensProvider {
           title = lang.mainTag.tooMany.title;
           tooltip = lang.mainTag.tooMany.description;
         }
+      } else if (/^h[1-6]$/.test(node.tagName)) {
+        // Generic message for headings, details are in the diagnostic hover
+        // Generische Nachricht für Überschriften, Details sind im Diagnose-Hover
+        if (node.tagName === "h1") {
+           title = lang.headingOrder.multipleH1.title;
+           tooltip = lang.headingOrder.multipleH1.description;
+        } else {
+           title = lang.headingOrder.skippedLevel.title;
+           tooltip = lang.headingOrder.skippedLevel.description;
+        }
       }
 
       return new vscode.CodeLens(node.range, {

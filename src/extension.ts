@@ -3,6 +3,7 @@ import { parseHtml } from "./parser";
 import { extractHtmlFromPhp } from "./php-extractor";
 import { imgAltRule } from "./rules/img-alt";
 import { mainTagRule } from "./rules/main-html";
+import { headingOrderRule } from "./rules/heading-order";
 import { A11yRule } from "./types";
 import { A11yQuickFixProvider } from "./quickfix";
 import { A11yCodeLensProvider } from "./codelens";
@@ -31,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
     { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] }
   );
 
-  const rules: A11yRule[] = [imgAltRule, mainTagRule];
+  const rules: A11yRule[] = [imgAltRule, mainTagRule, headingOrderRule];
 
   // Listen for document changes
   // Lauscht auf Dokumentänderungen
@@ -96,7 +97,7 @@ export function activate(context: vscode.ExtensionContext) {
     for (const rule of rules) {
       if (rule.checkDocument) {
         rule.checkDocument(nodes, {
-          report: ({ message, description, range }) => {
+          report: ({ message, description, range, relatedNode }) => {
             const diagnostic = new vscode.Diagnostic(
               range,
               message,
@@ -112,9 +113,12 @@ export function activate(context: vscode.ExtensionContext) {
             // Da 'checkDocument' oft keine spezifischen Nodes zurückgibt, erstellen wir hier ggf. einen Dummy-Node
             // or use the node from the range if available.
             // oder nutzen den Node aus dem Range, falls vorhanden.
-            // For "Main missing" (Range 0,0) we create a dummy:
-            // Für "Main fehlt" (Range 0,0) erstellen wir einen Dummy:
-            if (range.start.line === 0 && range.end.character === 0) {
+            
+            if (relatedNode) {
+              failingNodes.push(relatedNode);
+            } else if (range.start.line === 0 && range.end.character === 0) {
+               // For "Main missing" (Range 0,0) we create a dummy:
+               // Für "Main fehlt" (Range 0,0) erstellen wir einen Dummy:
                failingNodes.push({ tagName: "main", attributes: [], children: [], range });
             }
           }
