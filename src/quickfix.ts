@@ -1,34 +1,74 @@
 import * as vscode from "vscode";
 import { getLanguage } from "./language";
 
-export class AddAltAttributeFix implements vscode.CodeActionProvider {
-  provideCodeActions(document: vscode.TextDocument, range: vscode.Range) {
-    const lang = getLanguage();
-    const line = document.lineAt(range.start.line).text;
+/**
+ * Provider for Quick Fixes (Code Actions).
+ * Provider für Quick Fixes (Code Actions).
+ */
+export class A11yQuickFixProvider implements vscode.CodeActionProvider {
+  /**
+   * Provides available code actions for a given range.
+   * Stellt verfügbare Code-Aktionen für einen gegebenen Bereich bereit.
+   *
+   * @param document The document in which the command was invoked. / Das Dokument, in dem der Befehl aufgerufen wurde.
+   * @param range The range for which the command was invoked. / Der Bereich, für den der Befehl aufgerufen wurde.
+   * @param context Context carrying additional information. / Kontext, der zusätzliche Informationen enthält.
+   */
+  provideCodeActions(
+    document: vscode.TextDocument,
+    range: vscode.Range,
+    context: vscode.CodeActionContext
+  ): vscode.CodeAction[] | undefined {
+    const actions: vscode.CodeAction[] = [];
+    const lang = getLanguage() as any;
 
-    if (line.includes("alt=")) {
-      return;
+    for (const diagnostic of context.diagnostics) {
+      if (diagnostic.code === "img-alt") {
+        this.addAltFix(document, diagnostic.range, lang, actions);
+      } else if (diagnostic.code === "mainTag") {
+        // Check if it is the "Missing" error (Line 0)
+        // Prüfen ob es der "Fehlt"-Fehler ist (Zeile 0)
+        if (diagnostic.range.start.line === 0 && diagnostic.range.start.character === 0) {
+          this.addMainFix(document, lang, actions);
+        }
+      }
     }
+
+    return actions;
+  }
+
+  /**
+   * Adds a Quick Fix to insert an empty alt attribute.
+   * Fügt einen Quick Fix hinzu, um ein leeres alt-Attribut einzufügen.
+   */
+  private addAltFix(document: vscode.TextDocument, range: vscode.Range, lang: any, actions: vscode.CodeAction[]) {
+    const line = document.lineAt(range.start.line).text;
+    if (line.includes("alt=")) return;
 
     const imgIndex = line.indexOf("<img");
-    if (imgIndex === -1) {
-      return;
-    }
+    if (imgIndex === -1) return;
 
-    const insertPos = new vscode.Position(
-      range.start.line,
-      imgIndex + 4
-    );
-
-    const fix = new vscode.CodeAction(
-      lang.imgAlt.action,
-      vscode.CodeActionKind.QuickFix
-    );
-
+    const insertPos = new vscode.Position(range.start.line, imgIndex + 4);
+    const fix = new vscode.CodeAction(lang.imgAlt.action, vscode.CodeActionKind.QuickFix);
     fix.edit = new vscode.WorkspaceEdit();
     fix.edit.insert(document.uri, insertPos, ' alt=""');
     fix.isPreferred = true;
+    actions.push(fix);
+  }
 
-    return [fix];
+  /**
+   * Adds a Quick Fix to wrap the content in a <main> tag.
+   * Fügt einen Quick Fix hinzu, um den Inhalt in ein <main>-Tag einzuwickeln.
+   */
+  private addMainFix(document: vscode.TextDocument, lang: any, actions: vscode.CodeAction[]) {
+    const fix = new vscode.CodeAction("In <main> einwickeln", vscode.CodeActionKind.QuickFix);
+    fix.edit = new vscode.WorkspaceEdit();
+    
+    const firstLine = document.lineAt(0);
+    const lastLine = document.lineAt(document.lineCount - 1);
+
+    fix.edit.insert(document.uri, firstLine.range.start, "<main>\n");
+    fix.edit.insert(document.uri, lastLine.range.end, "\n</main>");
+    actions.push(fix);
   }
 }

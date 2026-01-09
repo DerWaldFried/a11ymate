@@ -3,6 +3,10 @@ import { A11yRule, RuleContext } from "../types";
 import { HtmlNode } from "../html-types";
 import { getLanguage } from "../language";
 
+/**
+ * Rule to check if <img> tags have an alt attribute.
+ * Regel zur Überprüfung, ob <img>-Tags ein alt-Attribut haben.
+ */
 export const imgAltRule: A11yRule = {
   id: "img-alt",
 

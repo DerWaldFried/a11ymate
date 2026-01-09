@@ -3,13 +3,29 @@ import { A11yRule, RuleContext } from "../types";
 import { HtmlNode } from "../html-types";
 import { getLanguage } from "../language";
 
+/**
+ * Rule to check for the existence and uniqueness of the <main> tag.
+ * Regel zur Überprüfung des Vorhandenseins und der Einzigartigkeit des <main>-Tags.
+ */
 export const mainTagRule: A11yRule = {
   id: "mainTag",
 
+  /**
+   * Checks the entire document for <main> tags.
+   * Überprüft das gesamte Dokument auf <main>-Tags.
+   *
+   * @param nodes The list of root nodes in the document. / Die Liste der Wurzelknoten im Dokument.
+   * @param context The rule context for reporting errors. / Der Regelkontext zum Melden von Fehlern.
+   */
   checkDocument(nodes: HtmlNode[], context: RuleContext) {
     const mainNodes: HtmlNode[] = [];
 
-    // Rekursive Funktion zum Sammeln aller <main> Tags
+    /**
+     * Recursively traverses the DOM tree to collect all <main> tags.
+     * Durchläuft rekursiv den DOM-Baum, um alle <main>-Tags zu sammeln.
+     *
+     * @param nodeList The list of nodes to traverse. / Die zu durchlaufende Knotenliste.
+     */
     function traverse(nodeList: HtmlNode[]) {
       for (const node of nodeList) {
         if (node.tagName === "main") {
@@ -24,15 +40,15 @@ export const mainTagRule: A11yRule = {
 
     const lang = getLanguage() as any; // Cast as any da mainTag evtl. noch nicht im Typ definiert ist
 
-    // Fall 1: Kein <main> Tag vorhanden
+    // Case 1: No <main> tag present / Fall 1: Kein <main> Tag vorhanden
     if (mainNodes.length === 0) {
       context.report({
         message: lang.mainTag.missing.title,
         description: lang.mainTag.missing.description,
-        range: new vscode.Range(0, 0, 0, 0) // Markiert den Anfang der Datei
+        range: new vscode.Range(0, 0, 0, 0) // Marks the beginning of the file / Markiert den Anfang der Datei
       });
     } 
-    // Fall 2: Mehr als ein <main> Tag
+    // Case 2: More than one <main> tag / Fall 2: Mehr als ein <main> Tag
     else if (mainNodes.length > 1) {
       for (const node of mainNodes) {
         context.report({
