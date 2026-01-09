@@ -1,6 +1,7 @@
 {
   "imgAlt": {
     "title": "⚠️ A11y: Missing alt attribute",
-    "description": "Images must include an alt attribute to provide text alternatives for screen readers."
+    "description": "Images must include an alt attribute to provide text alternatives for screen readers.",
+    "action": "Add an alt attribute"
   }
 }

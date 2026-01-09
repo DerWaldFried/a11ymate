@@ -1,6 +1,7 @@
 {
   "imgAlt": {
     "title": "⚠️ A11y: alt-Attribut fehlt",
-    "description": "Bilder benötigen ein alt-Attribut, um Screenreadern eine Textalternative zu bieten."
+    "description": "Bilder benötigen ein alt-Attribut, um Screenreadern eine Textalternative zu bieten.",
+    "action": "Füge einen alt-Attribut hinzu"
   }
 }
