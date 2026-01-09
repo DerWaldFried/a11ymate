@@ -1,71 +1,111 @@
-# a11ymate README
+# A11yMate - Accessibility Helper for VS Code
 
-This is the README for your extension "a11ymate". After writing up a brief description, we recommend including the following sections.
+A11yMate is a VS Code extension designed to help developers identify and fix accessibility (a11y) issues in HTML and PHP files directly within the editor. It features real-time analysis, CodeLens indicators, and Quick Fixes.
 
-## Features
+A11yMate ist eine VS Code-Erweiterung, die Entwicklern hilft, Barrierefreiheitsprobleme (a11y) in HTML- und PHP-Dateien direkt im Editor zu erkennen und zu beheben. Sie bietet Echtzeitanalyse, CodeLens-Indikatoren und Quick Fixes.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## 🚀 Features / Funktionen
 
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+*   **Real-time Analysis / Echtzeitanalyse**: Checks for missing attributes (e.g., `alt` on `<img>`) and structural issues (e.g., missing `<main>`). / Prüft auf fehlende Attribute (z. B. `alt` bei `<img>`) und strukturelle Probleme (z. B. fehlendes `<main>`).
+*   **CodeLens**: Shows status directly above the code. / Zeigt den Status direkt über dem Code an.
+*   **Quick Fixes**: Automatically fix common issues. / Behebt häufige Probleme automatisch.
+*   **Bilingual / Zweisprachig**: Supports English and German. / Unterstützt Englisch und Deutsch.
 
 ---
 
-## Following extension guidelines
+## 🛠️ Development Guide / Entwicklungsleitfaden
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+This guide explains how to add a new check (rule) for a tag or attribute cleanly.
+Dieser Leitfaden erklärt, wie man sauber eine neue Prüfung (Regel) für einen Tag oder ein Attribut hinzufügt.
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+### 1. Create a new Rule File / Erstelle eine neue Regel-Datei
 
-## Working with Markdown
+Create a new file in `src/rules/`, e.g., `src/rules/my-new-rule.ts`.
+Erstelle eine neue Datei in `src/rules/`, z. B. `src/rules/my-new-rule.ts`.
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+```typescript
+import { A11yRule, RuleContext } from "../types";
+import { HtmlNode } from "../html-types";
+import { getLanguage } from "../language";
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+export const myNewRule: A11yRule = {
+  id: "my-new-rule", // Unique ID / Eindeutige ID
 
-## For more information
+  // OPTION A: Check specific attributes on a single node
+  // OPTION A: Prüfe spezifische Attribute an einem einzelnen Knoten
+  check(node: HtmlNode, context: RuleContext) {
+    if (node.tagName !== "div") return; // Target tag / Ziel-Tag
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+    const lang = getLanguage();
+    // Check logic / Prüflogik
+    const hasRole = node.attributes.some(a => a.name === "role");
+    
+    if (!hasRole) {
+      context.report({
+        message: "Missing role",
+        description: "Div needs a role.",
+        range: node.range
+      });
+    }
+  },
 
-**Enjoy!**
+  // OPTION B: Check document structure (e.g. count tags)
+  // OPTION B: Prüfe Dokumentenstruktur (z. B. Tags zählen)
+  checkDocument(nodes: HtmlNode[], context: RuleContext) {
+    // Traverse nodes recursively to count or find relations
+    // Durchlaufe Knoten rekursiv, um zu zählen oder Beziehungen zu finden
+  }
+};
+```
+
+### 2. Add Localization / Füge Lokalisierung hinzu
+
+Add your messages to `src/languages/en.json` and `src/languages/de.json`.
+Füge deine Nachrichten zu `src/languages/en.json` und `src/languages/de.json` hinzu.
+
+```json
+"myNewRule": {
+  "title": "⚠️ Issue found",
+  "description": "Description of the issue."
+}
+```
+
+### 3. Register the Rule / Registriere die Regel
+
+Open `src/extension.ts` and add your rule to the `rules` array.
+Öffne `src/extension.ts` und füge deine Regel zum `rules`-Array hinzu.
+
+```typescript
+import { myNewRule } from "./rules/my-new-rule";
+
+// ...
+
+const rules: A11yRule[] = [imgAltRule, mainTagRule, myNewRule]; // Add here / Hier hinzufügen
+```
+
+### 4. (Optional) Add Quick Fix / (Optional) Füge Quick Fix hinzu
+
+If you want to offer an automatic fix, update `src/quickfix.ts`.
+Wenn du eine automatische Korrektur anbieten möchtest, aktualisiere `src/quickfix.ts`.
+
+1.  Open `src/quickfix.ts`. / Öffne `src/quickfix.ts`.
+2.  In `provideCodeActions`, check for your `diagnostic.code`. / Prüfe in `provideCodeActions` auf deinen `diagnostic.code`.
+3.  Implement a private method to create the `CodeAction`. / Implementiere eine private Methode, um die `CodeAction` zu erstellen.
+
+### 5. (Optional) Add CodeLens / (Optional) Füge CodeLens hinzu
+
+Update `src/codelens.ts` to display a specific message for your tag.
+Aktualisiere `src/codelens.ts`, um eine spezifische Nachricht für deinen Tag anzuzeigen.
+
+1.  Open `src/codelens.ts`. / Öffne `src/codelens.ts`.
+2.  Add a condition for your tag in `provideCodeLenses`. / Füge eine Bedingung für deinen Tag in `provideCodeLenses` hinzu.
+
+---
+
+## 📂 Project Structure / Projektstruktur
+
+*   `src/extension.ts`: Main entry point & rule registration. / Haupteinstiegspunkt & Regelregistrierung.
+*   `src/rules/`: Individual rule logic. / Individuelle Regellogik.
+*   `src/languages/`: Localization files. / Lokalisierungsdateien.
+*   `src/codelens.ts`: CodeLens provider logic. / CodeLens-Provider-Logik.
+*   `src/quickfix.ts`: Quick Fix provider logic. / Quick-Fix-Provider-Logik.
