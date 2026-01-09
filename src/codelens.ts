@@ -1,8 +1,11 @@
 import * as vscode from "vscode";
 import { HtmlNode } from "./html-types";
+import { getLanguage } from "./language";
 
 export class A11yCodeLensProvider implements vscode.CodeLensProvider {
   private nodes: HtmlNode[] = [];
+
+  lang = getLanguage();
 
   setNodes(nodes: HtmlNode[]) {
     this.nodes = nodes;
@@ -11,9 +14,9 @@ export class A11yCodeLensProvider implements vscode.CodeLensProvider {
   provideCodeLenses(): vscode.CodeLens[] {
     return this.nodes.map(node => {
       return new vscode.CodeLens(node.range, {
-        title: "⚠️ A11y: alt-Attribut fehlt",
+        title: this.lang.imgAlt.title,
         command: "",
-        tooltip: "Dieses Bild benötigt ein alt-Attribut (WCAG 1.1.1)"
+        tooltip: this.lang.imgAlt.description
       });
     });
   }
