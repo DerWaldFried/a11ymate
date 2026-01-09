@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
     { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] }
   );
 
-    const rules: A11yRule[] = [imgAltRule, mainTagRule];
+  const rules: A11yRule[] = [imgAltRule, mainTagRule];
 
   vscode.workspace.onDidChangeTextDocument(async event => {
     await analyze(event.document);
@@ -66,6 +66,24 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     for (const node of nodes) walk(node);
+
+    // Dokument-weite Regeln ausführen
+    for (const rule of rules) {
+      if (rule.checkDocument) {
+        rule.checkDocument(nodes, {
+          report: ({ message, description, range }) => {
+            const diagnostic = new vscode.Diagnostic(
+              range,
+              message,
+              vscode.DiagnosticSeverity.Warning
+            );
+            diagnostic.source = "A11yMate";
+            diagnostic.code = rule.id;
+            diags.push(diagnostic);
+          }
+        });
+      }
+    }
 
     diagnostics.set(doc.uri, diags);
 

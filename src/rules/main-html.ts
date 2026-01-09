@@ -7,20 +7,22 @@ export const mainTagRule: A11yRule = {
   id: "mainTag",
 
   checkDocument(nodes: HtmlNode[], context: RuleContext) {
-    const lang = getLanguage();
     const mainNodes: HtmlNode[] = [];
 
+    // Rekursive Funktion zum Sammeln aller <main> Tags
     function traverse(nodeList: HtmlNode[]) {
       for (const node of nodeList) {
         if (node.tagName === "main") {
           mainNodes.push(node);
         }
-        if(node.children) {
-            traverse(node.children);
+        if (node.children) {
+          traverse(node.children);
         }
       }
     }
     traverse(nodes);
+
+    const lang = getLanguage() as any; // Cast as any da mainTag evtl. noch nicht im Typ definiert ist
 
     // Fall 1: Kein <main> Tag vorhanden
     if (mainNodes.length === 0) {
