@@ -1,7 +1,9 @@
 import * as vscode from "vscode";
+import { getLanguage } from "./language";
 
 export class AddAltAttributeFix implements vscode.CodeActionProvider {
   provideCodeActions(document: vscode.TextDocument, range: vscode.Range) {
+    const lang = getLanguage();
     const line = document.lineAt(range.start.line).text;
 
     if (line.includes("alt=")) {
@@ -19,7 +21,7 @@ export class AddAltAttributeFix implements vscode.CodeActionProvider {
     );
 
     const fix = new vscode.CodeAction(
-      'Add alt="" attribute',
+      lang.imgAlt.action,
       vscode.CodeActionKind.QuickFix
     );
 
