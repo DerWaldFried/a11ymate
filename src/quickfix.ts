@@ -31,6 +31,8 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
         if (diagnostic.range.start.line === 0 && diagnostic.range.start.character === 0) {
           this.addMainFix(document, lang, actions);
         }
+      } else if (diagnostic.code === "heading-order") {
+        this.addHeadingFix(document, diagnostic.range, actions);
       }
     }
 
@@ -69,6 +71,48 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
 
     fix.edit.insert(document.uri, firstLine.range.start, "<main>\n");
     fix.edit.insert(document.uri, lastLine.range.end, "\n</main>");
+    actions.push(fix);
+  }
+
+  /**
+   * Adds a Quick Fix to correct the heading level.
+   * Fügt einen Quick Fix hinzu, um die Überschriftenebene zu korrigieren.
+   */
+  private addHeadingFix(document: vscode.TextDocument, range: vscode.Range, actions: vscode.CodeAction[]) {
+    const startTagText = document.getText(range);
+    const match = startTagText.match(/^<h([1-6])/i);
+    if (!match) return;
+
+    const currentLevel = parseInt(match[1]);
+    // Logic: h1 -> h2 (demote), h(n) -> h(n-1) (promote/fix gap)
+    // Logik: h1 -> h2 (abstufen), h(n) -> h(n-1) (aufstufen/Lücke schließen)
+    const targetLevel = currentLevel === 1 ? 2 : currentLevel - 1;
+    const newTagName = `h${targetLevel}`;
+
+    const fix = new vscode.CodeAction(`Ändere zu <${newTagName}>`, vscode.CodeActionKind.QuickFix);
+    fix.edit = new vscode.WorkspaceEdit();
+
+    // Replace start tag (preserve attributes) / Start-Tag ersetzen (Attribute erhalten)
+    const newStartTagText = startTagText.replace(new RegExp(`h${currentLevel}`, "i"), newTagName);
+    fix.edit.replace(document.uri, range, newStartTagText);
+
+    // Find and replace end tag / End-Tag finden und ersetzen
+    const docText = document.getText();
+    const startIndex = document.offsetAt(range.end);
+    const textAfter = docText.slice(startIndex);
+    const endTagRegex = new RegExp(`</h${currentLevel}>`, "i");
+    const endMatch = textAfter.match(endTagRegex);
+
+    if (endMatch && endMatch.index !== undefined) {
+      const endTagStartOffset = startIndex + endMatch.index;
+      const endTagEndOffset = endTagStartOffset + endMatch[0].length;
+      const endTagRange = new vscode.Range(
+        document.positionAt(endTagStartOffset),
+        document.positionAt(endTagEndOffset)
+      );
+      fix.edit.replace(document.uri, endTagRange, `</${newTagName}>`);
+    }
+
     actions.push(fix);
   }
 }
