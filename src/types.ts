@@ -10,5 +10,6 @@ export interface RuleContext {
 
 export interface A11yRule {
   id: string;
-  check(node: HtmlNode, context: RuleContext): void;
+  check?(node: HtmlNode, context: RuleContext): void;
+  checkDocument?(nodes: HtmlNode[], context: RuleContext): void;
 }

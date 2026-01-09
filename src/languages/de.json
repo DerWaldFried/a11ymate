@@ -3,5 +3,15 @@
     "title": "⚠️ A11y: alt-Attribut fehlt",
     "description": "Bilder benötigen ein alt-Attribut, um Screenreadern eine Textalternative zu bieten.",
     "action": "Füge einen alt-Attribut hinzu"
+  },
+  "mainTag": {
+    "missing": {
+      "title": "⚠️ A11y: <main>-Tag fehlt",
+      "description": "Ein <main>-Tag ist wichtig für die Barrierefreiheit, um den Hauptinhalt der Seite zu kennzeichnen."
+    },
+    "tooMany": {
+      "title": "⚠️ A11y: Zu viele <main>-Tags",
+      "description": "Es darf nur ein sichtbarer <main>-Tag pro Seite existieren, um Screenreader nicht zu verwirren."
+    }
   }
 }

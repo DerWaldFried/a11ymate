@@ -3,5 +3,15 @@
     "title": "⚠️ A11y: Missing alt attribute",
     "description": "Images must include an alt attribute to provide text alternatives for screen readers.",
     "action": "Add an alt attribute"
+  },
+  "mainTag": {
+    "missing": {
+      "title": "⚠️ A11y: Missing <main> tag",
+      "description": "A <main> tag is important for accessibility to identify the main content of the page."
+    },
+    "tooMany": {
+      "title": "⚠️ A11y: Too many <main> tags",
+      "description": "There can only be one visible <main> tag per page to prevent screen readers from being confused."
+    }
   }
 }
