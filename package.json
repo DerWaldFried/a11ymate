@@ -3,6 +3,7 @@
   "displayName": "A11yMate",
   "description": "This extension helps developers build accessible, inclusive, and WCAG‑compliant websites directly inside Visual Studio Code.",
   "version": "0.0.1",
+  "publisher": "Patrick Bloch - Fabelgrund",
   "engines": {
     "vscode": "^1.107.0"
   },
@@ -16,12 +17,20 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "a11ymate.helloWorld",
-        "title": "Hello World"
+    "configuration": {
+      "title": "A11yMate",
+      "properties": {
+        "a11ymate.language": {
+          "type": "string",
+          "default": "en",
+          "enum": [
+            "en",
+            "de"
+          ],
+          "description": "Language for A11yMate messages / Sprache für A11yMate-Nachrichten"
+        }
       }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
