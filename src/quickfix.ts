@@ -39,6 +39,8 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
         this.addColorFix(document, diagnostic.range, lang, actions);
       } else if (diagnostic.code === "input-feedback") {
         this.addInputFeedbackFix(document, diagnostic.range, lang, actions);
+      } else if (diagnostic.code === "html-lang") {
+        this.addLangFix(document, diagnostic.range, lang, actions);
       }
     }
 
@@ -229,5 +231,29 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
     fix.edit.insert(document.uri, range.start, pTag);
 
     actions.push(fix);
+  }
+
+  /**
+   * Adds Quick Fixes to set the html lang attribute.
+   * Fügt Quick Fixes hinzu, um das html lang-Attribut zu setzen.
+   */
+  private addLangFix(document: vscode.TextDocument, range: vscode.Range, lang: any, actions: vscode.CodeAction[]) {
+    const suggestions = ["de", "en"];
+    
+    for (const langCode of suggestions) {
+      const title = lang.htmlLang.action.replace("{lang}", langCode);
+      const fix = new vscode.CodeAction(title, vscode.CodeActionKind.QuickFix);
+      fix.edit = new vscode.WorkspaceEdit();
+
+      // We assume the range is on the <html> tag. We insert the attribute after "html".
+      // Wir nehmen an, der Bereich ist auf dem <html>-Tag. Wir fügen das Attribut nach "html" ein.
+      // Simple insertion: <html lang="de">
+      const text = document.getText(range);
+      const insertPos = range.start.translate(0, 5); // Length of "<html"
+      
+      fix.edit.insert(document.uri, insertPos, ` lang="${langCode}"`);
+      if (langCode === "de") fix.isPreferred = true; // Prefer DE based on context, or make logic smarter
+      actions.push(fix);
+    }
   }
 }

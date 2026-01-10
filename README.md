@@ -10,6 +10,7 @@ A11yMate ist eine VS Code-Erweiterung, die Entwicklern hilft, Barrierefreiheitsp
 *   **Color Contrast / Farbkontrast**: Verifies WCAG AA compliance for text and UI elements. / Überprüft die Einhaltung von WCAG AA für Text und UI-Elemente.
 *   **Form Accessibility / Formular-Barrierefreiheit**: Ensures required inputs have associated descriptions. / Stellt sicher, dass erforderliche Eingabefelder verknüpfte Beschreibungen haben.
 *   **Heading Structure / Überschriftenstruktur**: Validates the hierarchy (h1-h6). / Validiert die Hierarchie (h1-h6).
+*   **Language Attribute / Sprachattribut**: Checks for the presence of the `lang` attribute on the `<html>` tag. / Prüft auf das Vorhandensein des `lang`-Attributs im `<html>`-Tag.
 *   **CodeLens**: Shows status directly above the code. / Zeigt den Status direkt über dem Code an.
 *   **Quick Fixes**: Automatically fix common issues. / Behebt häufige Probleme automatisch.
 *   **Bilingual / Zweisprachig**: Supports English and German. / Unterstützt Englisch und Deutsch.

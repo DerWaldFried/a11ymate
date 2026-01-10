@@ -52,9 +52,19 @@ export class A11yCodeLensProvider implements vscode.CodeLensProvider {
           title = lang.mainTag.tooMany.title;
           tooltip = lang.mainTag.tooMany.description;
         }
-      } else if (node.tagName === "body" || node.tagName === "html") {
+      } else if (node.tagName === "body") {
         title = lang.mainTag.missing.title;
         tooltip = lang.mainTag.missing.description;
+      } else if (node.tagName === "html") {
+        // Could be main missing OR lang missing. We prioritize Lang here or show generic warning.
+        // Könnte Main fehlen ODER Lang fehlen. Wir zeigen hier eine generische Warnung oder prüfen Attribute.
+        title = "⚠️ A11y: Issue (Main/Lang)"; 
+        if (!node.attributes.some(a => a.name === "lang")) {
+             title = lang.htmlLang.missing.title;
+        } else {
+             title = lang.mainTag.missing.title;
+        }
+        tooltip = "Check problems panel.";
       } else if (/^h[1-6]$/.test(node.tagName)) {
         // Generic message for headings, details are in the diagnostic hover
         // Generische Nachricht für Überschriften, Details sind im Diagnose-Hover

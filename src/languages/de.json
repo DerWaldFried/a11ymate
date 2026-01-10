@@ -64,5 +64,12 @@
       "description": "Prüfe Kontrast oder fehlende Verknüpfungen."
     },
     "action": "Füge aria-describedby und Hinweis hinzu"
+  },
+  "htmlLang": {
+    "missing": {
+      "title": "⚠️ A11y: Sprache nicht definiert",
+      "description": "Das <html>-Element benötigt ein 'lang'-Attribut (z.B. lang=\"de\"), damit Screenreader die korrekte Aussprache wählen."
+    },
+    "action": "Sprache auf '{lang}' setzen"
     }
 }

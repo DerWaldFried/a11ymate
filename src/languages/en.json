@@ -64,5 +64,12 @@
       "description": "Check contrast or missing associations."
     },
     "action": "Add aria-describedby and hint"
+  },
+  "htmlLang": {
+    "missing": {
+      "title": "⚠️ A11y: Language not defined",
+      "description": "The <html> element needs a 'lang' attribute (e.g., lang=\"en\") so screen readers can choose the correct pronunciation."
+    },
+    "action": "Set language to '{lang}'"
     }
 }
