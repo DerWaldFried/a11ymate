@@ -71,5 +71,11 @@
       "description": "Das <html>-Element benötigt ein 'lang'-Attribut (z.B. lang=\"de\"), damit Screenreader die korrekte Aussprache wählen."
     },
     "action": "Sprache auf '{lang}' setzen"
+  },
+  "general": {
+    "codeLens": {
+      "title": "⚠️ A11y: Problem (Main/Lang)",
+      "description": "Details im Problem-Panel prüfen."
     }
+  }
 }

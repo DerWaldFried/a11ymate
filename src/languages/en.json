@@ -71,5 +71,11 @@
       "description": "The <html> element needs a 'lang' attribute (e.g., lang=\"en\") so screen readers can choose the correct pronunciation."
     },
     "action": "Set language to '{lang}'"
+  },
+  "general": {
+    "codeLens": {
+      "title": "⚠️ A11y: Issue (Main/Lang)",
+      "description": "Check the problems panel for details."
     }
+  }
 }
