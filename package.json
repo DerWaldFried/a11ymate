@@ -2,7 +2,7 @@
   "name": "a11ymate",
   "displayName": "A11yMate",
   "description": "This extension helps developers build accessible, inclusive, and WCAG‑compliant websites directly inside Visual Studio Code.",
-  "version": "0.0.1",
+  "version": "1.0.0-alpha.1",
   "publisher": "DerWaldFried",
   "repository": {
     "type": "git",
