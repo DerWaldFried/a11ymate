@@ -14,12 +14,6 @@ export class A11yCodeLensProvider implements vscode.CodeLensProvider {
   private nodes: HtmlNode[] = [];
 
   /**
-   * Current language configuration.
-   * Aktuelle Sprachkonfiguration.
-   */
-  lang = getLanguage();
-
-  /**
    * Updates the list of failing nodes.
    * Aktualisiert die Liste der fehlerhaften Knoten.
    *
@@ -35,7 +29,7 @@ export class A11yCodeLensProvider implements vscode.CodeLensProvider {
    */
   provideCodeLenses(): vscode.CodeLens[] {
     return this.nodes.map(node => {
-      const lang = this.lang as any;
+      const lang = getLanguage() as any;
       let title = "";
       let tooltip = "";
 
