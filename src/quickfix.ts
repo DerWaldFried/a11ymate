@@ -36,6 +36,8 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
         this.addHeadingFix(document, diagnostic.range, lang, actions);
       } else if (diagnostic.code === "color-contrast") {
         this.addColorFix(document, diagnostic.range, lang, actions);
+      } else if (diagnostic.code === "input-feedback") {
+        this.addInputFeedbackFix(document, diagnostic.range, lang, actions);
       }
     }
 
@@ -172,5 +174,42 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
        fix.edit.replace(document.uri, range, newText);
        actions.push(fix);
     }
+  }
+
+  /**
+   * Adds a Quick Fix to add aria-describedby and a corresponding info element.
+   * Fügt einen Quick Fix hinzu, um aria-describedby und ein entsprechendes Info-Element hinzuzufügen.
+   */
+  private addInputFeedbackFix(document: vscode.TextDocument, range: vscode.Range, lang: any, actions: vscode.CodeAction[]) {
+    const text = document.getText(range);
+    
+    // Try to find existing ID
+    // Versuche existierende ID zu finden
+    const idMatch = /id=["']([^"']+)["']/.exec(text);
+    let baseId = "input";
+    if (idMatch) {
+      baseId = idMatch[1];
+    } else {
+      // Generate a simple ID if none exists (in a real app, maybe use random or line number)
+      // Generiere eine einfache ID, falls keine existiert
+      baseId = `field-${range.start.line}`;
+    }
+
+    const errorId = `error-${baseId}`;
+    const fix = new vscode.CodeAction(lang.inputFeedback.action, vscode.CodeActionKind.QuickFix);
+    fix.edit = new vscode.WorkspaceEdit();
+
+    // 1. Add aria-describedby to input
+    // 1. Füge aria-describedby zum Input hinzu
+    // Insert before the closing /> or >
+    const insertAttrPos = range.end.translate(0, text.endsWith("/>") ? -2 : -1);
+    fix.edit.insert(document.uri, insertAttrPos, ` aria-describedby="${errorId}"`);
+
+    // 2. Add paragraph above the input
+    // 2. Füge Paragraph über dem Input hinzu
+    const pTag = `<p id="${errorId}">Error Info</p>\n`;
+    fix.edit.insert(document.uri, range.start, pTag);
+
+    actions.push(fix);
   }
 }

@@ -53,5 +53,16 @@
       "adjustColor": "Adjust color to {color}",
       "removeDecoration": "Remove 'text-decoration: none'"
     }
-  }
+  },
+  "inputFeedback": {
+    "missingDescribedBy": {
+      "title": "ℹ️ A11y: Link additional information",
+      "description": "For required fields, 'aria-describedby' is recommended to link hints or error messages. Use native HTML primarily, but ARIA for this connection."
+    },
+    "codeLens": {
+      "title": "⚠️ A11y: Input Issue",
+      "description": "Check contrast or missing associations."
+    },
+    "action": "Add aria-describedby and hint"
+    }
 }

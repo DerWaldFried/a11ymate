@@ -5,6 +5,7 @@ import { imgAltRule } from "./rules/img-alt";
 import { mainTagRule } from "./rules/main-html";
 import { headingOrderRule } from "./rules/heading-order";
 import { colorContrastRule } from "./rules/color-contrast";
+import { inputFeedbackRule } from "./rules/input-feedback";
 import { A11yRule } from "./types";
 import { A11yQuickFixProvider } from "./quickfix";
 import { A11yCodeLensProvider } from "./codelens";
@@ -33,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
     { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] }
   );
 
-  const rules: A11yRule[] = [imgAltRule, mainTagRule, headingOrderRule, colorContrastRule];
+  const rules: A11yRule[] = [imgAltRule, mainTagRule, headingOrderRule, colorContrastRule, inputFeedbackRule];
 
   // Listen for document changes
   // Lauscht auf Dokumentänderungen

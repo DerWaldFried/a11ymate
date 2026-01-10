@@ -53,5 +53,16 @@
       "adjustColor": "Farbe anpassen zu {color}",
       "removeDecoration": "Entferne 'text-decoration: none'"
     }
-  }
+  },
+  "inputFeedback": {
+    "missingDescribedBy": {
+      "title": "ℹ️ A11y: Zusätzliche Informationen verknüpfen",
+      "description": "Für erforderliche Felder wird 'aria-describedby' empfohlen, um Hinweise oder Fehlermeldungen zu verknüpfen. Nutze primär HTML, aber ARIA für diese Verbindung."
+    },
+    "codeLens": {
+      "title": "⚠️ A11y: Input-Problem",
+      "description": "Prüfe Kontrast oder fehlende Verknüpfungen."
+    },
+    "action": "Füge aria-describedby und Hinweis hinzu"
+    }
 }
