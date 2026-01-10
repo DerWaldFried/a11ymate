@@ -19,6 +19,8 @@ export const mainTagRule: A11yRule = {
    */
   checkDocument(nodes: HtmlNode[], context: RuleContext) {
     const mainNodes: HtmlNode[] = [];
+    let htmlNode: HtmlNode | undefined;
+    let bodyNode: HtmlNode | undefined;
 
     /**
      * Recursively traverses the DOM tree to collect all <main> tags.
@@ -28,6 +30,12 @@ export const mainTagRule: A11yRule = {
      */
     function traverse(nodeList: HtmlNode[]) {
       for (const node of nodeList) {
+        if (node.tagName === "html") {
+          htmlNode = node;
+        }
+        if (node.tagName === "body") {
+          bodyNode = node;
+        }
         if (node.tagName === "main") {
           mainNodes.push(node);
         }
@@ -42,11 +50,28 @@ export const mainTagRule: A11yRule = {
 
     // Case 1: No <main> tag present / Fall 1: Kein <main> Tag vorhanden
     if (mainNodes.length === 0) {
-      context.report({
-        message: lang.mainTag.missing.title,
-        description: lang.mainTag.missing.description,
-        range: new vscode.Range(0, 0, 0, 0) // Marks the beginning of the file / Markiert den Anfang der Datei
-      });
+      // Prefer reporting on body or html tag / Bevorzuge Meldung am Body- oder HTML-Tag
+      if (bodyNode) {
+        context.report({
+          message: lang.mainTag.missing.title,
+          description: lang.mainTag.missing.description,
+          range: bodyNode.range,
+          relatedNode: bodyNode
+        });
+      } else if (htmlNode) {
+        context.report({
+          message: lang.mainTag.missing.title,
+          description: lang.mainTag.missing.description,
+          range: htmlNode.range,
+          relatedNode: htmlNode
+        });
+      } else {
+        context.report({
+          message: lang.mainTag.missing.title,
+          description: lang.mainTag.missing.description,
+          range: new vscode.Range(0, 0, 0, 0) // Fallback
+        });
+      }
     } 
     // Case 2: More than one <main> tag / Fall 2: Mehr als ein <main> Tag
     else if (mainNodes.length > 1) {

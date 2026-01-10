@@ -11,7 +11,7 @@ import { HtmlNode } from "./html-types";
 export async function parseHtml(html: string): Promise<HtmlNode[]> {
   const parse5 = await import("parse5");
 
-  const document = parse5.parseFragment(html, {
+  const document = parse5.parse(html, {
     sourceCodeLocationInfo: true
   });
 

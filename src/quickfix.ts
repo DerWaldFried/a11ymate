@@ -27,10 +27,11 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
       if (diagnostic.code === "img-alt") {
         this.addAltFix(document, diagnostic.range, lang, actions);
       } else if (diagnostic.code === "mainTag") {
-        // Check if it is the "Missing" error (Line 0)
-        // Prüfen ob es der "Fehlt"-Fehler ist (Zeile 0)
-        if (diagnostic.range.start.line === 0 && diagnostic.range.start.character === 0) {
-          this.addMainFix(document, lang, actions);
+        // Check if it is NOT the "Too many" error (which points to <main>)
+        // Prüfen, ob es NICHT der "Zu viele"-Fehler ist (der auf <main> zeigt)
+        const text = document.getText(diagnostic.range);
+        if (!text.trim().toLowerCase().startsWith("<main")) {
+          this.addMainFix(document, diagnostic.range, lang, actions);
         }
       } else if (diagnostic.code === "heading-order") {
         this.addHeadingFix(document, diagnostic.range, lang, actions);
@@ -67,15 +68,32 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
    * Adds a Quick Fix to wrap the content in a <main> tag.
    * Fügt einen Quick Fix hinzu, um den Inhalt in ein <main>-Tag einzuwickeln.
    */
-  private addMainFix(document: vscode.TextDocument, lang: any, actions: vscode.CodeAction[]) {
+  private addMainFix(document: vscode.TextDocument, range: vscode.Range, lang: any, actions: vscode.CodeAction[]) {
     const fix = new vscode.CodeAction(lang.mainTag.missing.action, vscode.CodeActionKind.QuickFix);
     fix.edit = new vscode.WorkspaceEdit();
     
-    const firstLine = document.lineAt(0);
-    const lastLine = document.lineAt(document.lineCount - 1);
+    const text = document.getText(range);
 
-    fix.edit.insert(document.uri, firstLine.range.start, "<main>\n");
-    fix.edit.insert(document.uri, lastLine.range.end, "\n</main>");
+    // Check if we are on <body> (smart fix) / Prüfen ob wir auf <body> sind (schlauer Fix)
+    if (text.match(/^<body/i)) {
+      // Insert <main> after <body> start tag / <main> nach <body> Start-Tag einfügen
+      fix.edit.insert(document.uri, range.end, "\n<main>");
+
+      // Insert </main> before </body> end tag / </main> vor </body> End-Tag einfügen
+      const docText = document.getText();
+      const bodyEndIndex = docText.lastIndexOf("</body>"); // Search in full document / Suche im ganzen Dokument
+      if (bodyEndIndex !== -1) {
+        const insertEndPos = document.positionAt(bodyEndIndex);
+        fix.edit.insert(document.uri, insertEndPos, "\n</main>\n");
+      }
+    } else {
+      // Fallback: Wrap everything (e.g. if no body found) / Fallback: Alles einwickeln
+      const firstLine = document.lineAt(0);
+      const lastLine = document.lineAt(document.lineCount - 1);
+      fix.edit.insert(document.uri, firstLine.range.start, "<main>\n");
+      fix.edit.insert(document.uri, lastLine.range.end, "\n</main>");
+    }
+    
     actions.push(fix);
   }
 
