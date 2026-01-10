@@ -23,6 +23,35 @@
     "skippedLevel": {
       "title": "⚠️ A11y: Heading level skipped",
       "description": "Hierarchy is inconsistent (e.g. <h1> to <h3>). Headings should not be used for styling only."
+    },
+    "action": "Change to <{tag}>"
+  },
+  "colorContrast": {
+    "ratio": {
+      "normal": {
+        "title": "⚠️ A11y: Low Contrast (Text)",
+        "description": "Contrast is {ratio}:1. Required is 4.5:1 for normal text (WCAG AA)."
+      },
+      "largeText": {
+        "title": "⚠️ A11y: Low Contrast (Large)",
+        "description": "Contrast is {ratio}:1. Required is 3:1 for large text (WCAG AA)."
+      },
+      "ui": {
+        "title": "⚠️ A11y: Low Contrast (UI)",
+        "description": "Contrast is {ratio}:1. Required is 3:1 for UI elements (WCAG AA)."
+      }
+    },
+    "colorAlone": {
+      "title": "⚠️ A11y: Color alone used",
+      "description": "Links must not rely on color alone. Add 'text-decoration: underline' or remove 'none'."
+    },
+    "codeLens": {
+      "title": "⚠️ A11y: Color/Contrast Issue",
+      "description": "Check the problems panel for details."
+    },
+    "actions": {
+      "adjustColor": "Adjust color to {color}",
+      "removeDecoration": "Remove 'text-decoration: none'"
     }
   }
 }

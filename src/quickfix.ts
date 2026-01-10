@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { getLanguage } from "./language";
+import { parseColor, suggestColor } from "./utils/color";
 
 /**
  * Provider for Quick Fixes (Code Actions).
@@ -32,7 +33,9 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
           this.addMainFix(document, lang, actions);
         }
       } else if (diagnostic.code === "heading-order") {
-        this.addHeadingFix(document, diagnostic.range, actions);
+        this.addHeadingFix(document, diagnostic.range, lang, actions);
+      } else if (diagnostic.code === "color-contrast") {
+        this.addColorFix(document, diagnostic.range, lang, actions);
       }
     }
 
@@ -78,7 +81,7 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
    * Adds a Quick Fix to correct the heading level.
    * Fügt einen Quick Fix hinzu, um die Überschriftenebene zu korrigieren.
    */
-  private addHeadingFix(document: vscode.TextDocument, range: vscode.Range, actions: vscode.CodeAction[]) {
+  private addHeadingFix(document: vscode.TextDocument, range: vscode.Range, lang: any, actions: vscode.CodeAction[]) {
     const startTagText = document.getText(range);
     const match = startTagText.match(/^<h([1-6])/i);
     if (!match) return;
@@ -89,7 +92,8 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
     const targetLevel = currentLevel === 1 ? 2 : currentLevel - 1;
     const newTagName = `h${targetLevel}`;
 
-    const fix = new vscode.CodeAction(`Ändere zu <${newTagName}>`, vscode.CodeActionKind.QuickFix);
+    const title = lang.headingOrder.action.replace("{tag}", newTagName);
+    const fix = new vscode.CodeAction(title, vscode.CodeActionKind.QuickFix);
     fix.edit = new vscode.WorkspaceEdit();
 
     // Replace start tag (preserve attributes) / Start-Tag ersetzen (Attribute erhalten)
@@ -114,5 +118,59 @@ export class A11yQuickFixProvider implements vscode.CodeActionProvider {
     }
 
     actions.push(fix);
+  }
+
+  /**
+   * Adds a Quick Fix to adjust color contrast.
+   * Fügt einen Quick Fix hinzu, um den Farbkontrast anzupassen.
+   */
+  private addColorFix(document: vscode.TextDocument, range: vscode.Range, lang: any, actions: vscode.CodeAction[]) {
+    const text = document.getText(range);
+    
+    // Extract colors again to calculate suggestion
+    // Farben erneut extrahieren, um Vorschlag zu berechnen
+    const colorMatch = /color\s*:\s*([^;"]+)/.exec(text);
+    const bgMatch = /background-color\s*:\s*([^;"]+)/.exec(text);
+
+    if (colorMatch && bgMatch) {
+      const fg = parseColor(colorMatch[1]);
+      const bg = parseColor(bgMatch[1]);
+
+      if (fg && bg) {
+        // Determine target ratio (simplified logic, assuming 4.5 for safety)
+        // Zielverhältnis bestimmen (vereinfachte Logik, Annahme 4.5 zur Sicherheit)
+        const targetRatio = 4.5;
+        const newColorHex = suggestColor(fg, bg, targetRatio);
+
+        if (newColorHex) {
+          const title = lang.colorContrast.actions.adjustColor.replace("{color}", newColorHex);
+          const fix = new vscode.CodeAction(title, vscode.CodeActionKind.QuickFix);
+          fix.edit = new vscode.WorkspaceEdit();
+
+          // Find the exact range of the color value in the text
+          // Finde den exakten Bereich des Farbwerts im Text
+          // colorMatch[0] is e.g. "color: red", colorMatch[1] is "red"
+          const matchIndex = colorMatch.index;
+          const valueOffset = colorMatch[0].indexOf(colorMatch[1]);
+          const startPos = document.positionAt(document.offsetAt(range.start) + matchIndex + valueOffset);
+          const endPos = document.positionAt(document.offsetAt(range.start) + matchIndex + valueOffset + colorMatch[1].length);
+          
+          fix.edit.replace(document.uri, new vscode.Range(startPos, endPos), newColorHex);
+          fix.isPreferred = true;
+          actions.push(fix);
+        }
+      }
+    } else if (/text-decoration\s*:\s*none/.test(text) && /^<a\b/i.test(text)) {
+       // Fix for "Color alone": Remove text-decoration: none
+       // Fix für "Nur Farbe": Entferne text-decoration: none
+       const fix = new vscode.CodeAction(lang.colorContrast.actions.removeDecoration, vscode.CodeActionKind.QuickFix);
+       fix.edit = new vscode.WorkspaceEdit();
+       
+       // Simple replace for demonstration. In production, use regex to be precise.
+       // Einfaches Ersetzen zur Demonstration. In Produktion Regex nutzen.
+       const newText = text.replace(/text-decoration\s*:\s*none;?/, "");
+       fix.edit.replace(document.uri, range, newText);
+       actions.push(fix);
+    }
   }
 }

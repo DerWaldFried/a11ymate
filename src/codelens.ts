@@ -62,6 +62,10 @@ export class A11yCodeLensProvider implements vscode.CodeLensProvider {
            title = lang.headingOrder.skippedLevel.title;
            tooltip = lang.headingOrder.skippedLevel.description;
         }
+      } else if (node.tagName === "button" || node.tagName === "input" || node.tagName === "textarea" || node.attributes.some(a => a.name === "style")) {
+        // Fallback for color contrast issues on generic or specific tags
+        title = lang.colorContrast.codeLens.title;
+        tooltip = lang.colorContrast.codeLens.description;
       }
 
       return new vscode.CodeLens(node.range, {

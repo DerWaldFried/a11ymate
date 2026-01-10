@@ -23,6 +23,35 @@
     "skippedLevel": {
       "title": "⚠️ A11y: Überschriftenebene übersprungen",
       "description": "Die Hierarchie ist inkonsistent (z.B. <h1> auf <h3>). Überschriften sollten nicht nur für Styling genutzt werden."
+    },
+    "action": "Ändere zu <{tag}>"
+  },
+  "colorContrast": {
+    "ratio": {
+      "normal": {
+        "title": "⚠️ A11y: Kontrast zu niedrig (Text)",
+        "description": "Der Kontrast beträgt {ratio}:1. Erforderlich ist 4.5:1 für normalen Text (WCAG AA)."
+      },
+      "largeText": {
+        "title": "⚠️ A11y: Kontrast zu niedrig (Groß)",
+        "description": "Der Kontrast beträgt {ratio}:1. Erforderlich ist 3:1 für großen Text (WCAG AA)."
+      },
+      "ui": {
+        "title": "⚠️ A11y: Kontrast zu niedrig (UI)",
+        "description": "Der Kontrast beträgt {ratio}:1. Erforderlich ist 3:1 für UI-Elemente (WCAG AA)."
+      }
+    },
+    "colorAlone": {
+      "title": "⚠️ A11y: Nur Farbe zur Unterscheidung",
+      "description": "Links dürfen nicht nur durch Farbe erkennbar sein. Füge 'text-decoration: underline' hinzu oder entferne 'none'."
+    },
+    "codeLens": {
+      "title": "⚠️ A11y: Farb-/Kontrastproblem",
+      "description": "Details im Problem-Panel prüfen."
+    },
+    "actions": {
+      "adjustColor": "Farbe anpassen zu {color}",
+      "removeDecoration": "Entferne 'text-decoration: none'"
     }
   }
 }
